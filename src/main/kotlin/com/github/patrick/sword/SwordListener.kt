@@ -1,11 +1,11 @@
 package com.github.patrick.sword
 
 import com.github.patrick.sword.SwordProcess.clickAction
+import com.github.patrick.sword.SwordProcess.materials
 import com.github.patrick.sword.SwordProcess.resetSword
 import com.github.patrick.sword.SwordProcess.sendDeathMessage
 import com.github.patrick.sword.SwordProcess.sendPacketTo
 import com.github.patrick.sword.SwordProcess.swordPlayer
-import org.bukkit.Material
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.entity.PlayerDeathEvent
@@ -18,7 +18,7 @@ class SwordListener : Listener {
     @EventHandler
     fun onInteract(event: PlayerInteractEvent) {
         event.item?.run {
-            if (setOf(Material.WOOD_SWORD, Material.STONE_SWORD, Material.IRON_SWORD, Material.GOLD_SWORD, Material.DIAMOND_SWORD).contains(type)) {
+            if (materials.contains(type)) {
                 val player = event.player
                 val swordPlayer = swordPlayer[player]?: return
 

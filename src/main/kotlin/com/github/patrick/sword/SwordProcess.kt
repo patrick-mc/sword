@@ -16,6 +16,7 @@ import org.bukkit.scheduler.BukkitTask
 
 object SwordProcess {
     val swordPlayer = HashMap<Player, SwordPlayer>()
+    val materials = arrayOf(Material.WOOD_SWORD, Material.STONE_SWORD, Material.GOLD_SWORD, Material.IRON_SWORD, Material.DIAMOND_SWORD)
     private var task: BukkitTask? = null
     private val command = getPluginCommand("sword")
 
@@ -84,7 +85,7 @@ object SwordProcess {
     private fun setCoolDown(player: Player, item: ItemStack?) {
         var material = Material.AIR
         item?.let { material = it.type }
-        arrayOf(Material.WOOD_SWORD, Material.STONE_SWORD, Material.GOLD_SWORD, Material.IRON_SWORD, Material.DIAMOND_SWORD).forEach {
+        materials.forEach {
             player.setCooldown(it, when (material) {
                 Material.WOOD_SWORD -> 25
                 Material.STONE_SWORD -> 20

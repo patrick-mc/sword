@@ -123,11 +123,8 @@ class SwordEntity(private val owner: Player?, private val item: ItemStack?) {
 
     fun sendTo(players: Collection<Player>, new: Boolean) {
         updateEquipment(players)
-        armorStand?.entityId?.let { Packet.ENTITY.equipment(it, EquipmentSlot.HEAD, item?.type?.id?.let { id -> Tap.ITEM.newItemStack(id, 1, 0 ) }).sendTo(players) }
         Packet.ENTITY.metadata(armorStand).sendTo(players)
         tapArmorStand?.let { Packet.ENTITY.teleport(armorStand, it.posX, it.posY, it.posZ, it.yaw, it.pitch, false).sendTo(players) }
-        if (new) {
-            Packet.ENTITY.spawnMob(armorStand).sendTo(players)
-        }
+        if (new) Packet.ENTITY.spawnMob(armorStand).sendTo(players)
     }
 }

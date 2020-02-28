@@ -40,7 +40,7 @@ class SwordCommandExecutor : CommandExecutor {
             if (action == "add") addPlayer(player)
             if (action == "remove") removePlayer(player)
         }
-        if (args.size > 2) sender?.sendMessage("Unrecognized arguments: " + args.drop(2))
+        sendMessage(sender, 2, args)
     }
 
     private fun toggleSwordPlayer(sender: CommandSender?, args: Array<out String>) {
@@ -49,10 +49,12 @@ class SwordCommandExecutor : CommandExecutor {
             if (action == "on") getAllPlayers()?.forEach { addPlayer(it) }
             if (action == "off") getAllPlayers()?.forEach { removePlayer(it) }
         }
-        if (args.size > 1) sender?.sendMessage("Unrecognized arguments: " + args.drop(1))
+        sendMessage(sender, 1, args)
     }
 
     private fun addPlayer(player: Player) = if (swordPlayer[player] == null) swordPlayer[player] = SwordPlayer() else null
 
     private fun removePlayer(player: Player) = swordPlayer[player]?.let { swordPlayer.remove(player) }
+
+    private fun sendMessage(sender: CommandSender?, size: Int, args: Array<out String>) = if (size > 1) sender?.sendMessage("Unrecognized arguments: " + args.drop(size)) else null
 }
