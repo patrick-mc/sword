@@ -1,0 +1,31 @@
+name: Sword
+version: 0.1-alpha
+description: Sword plugin written in Kotlin
+api-version: "1.12"
+load: POSTWORLD
+author: PatrickKR
+website: https://github.com/patrick-mc
+main: com.github.patrick.sword.SwordPlugin
+database: false
+depend: [Tap, Kotlin]
+prefix: SWORD
+commands:
+  sword:
+    description: Sword Command
+    aliases: [sw]
+    permission: sword.command
+    permission-message: You do not have permission to use psychics commands.
+    usage: "Usage: /<command> [start|stop]"
+permissions:
+  sword.command:
+    default: op
+  sword.command.*:
+    default: op
+    children:
+      sword.command.start: true
+      sword.command.stop: true
+  sword.command.start: &command
+    default: op
+    children:
+      sword.command: true
+  sword.command.stop: *command
