@@ -3,10 +3,8 @@ plugins {
     maven
 }
 
-var pluginGroup = "com.github.patrick-mc"
-var pluginVersion = "0.1-beta"
-group = pluginGroup
-version = pluginVersion
+group = "com.github.patrick-mc"
+version = "0.1-beta"
 
 repositories {
     mavenCentral()
