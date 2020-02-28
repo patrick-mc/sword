@@ -11,6 +11,7 @@ repositories {
     mavenLocal()
     maven(url = "https://jitpack.io/")
     maven(url = "https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
+    maven(url = "https://oss.sonatype.org/content/repositories/snapshots/")
 }
 
 dependencies {
