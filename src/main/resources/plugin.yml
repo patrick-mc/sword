@@ -1,5 +1,5 @@
 name: Sword
-version: 0.1-alpha
+version: 0.2-beta
 description: Sword plugin written in Kotlin
 api-version: "1.12"
 load: POSTWORLD

@@ -1,7 +1,7 @@
  # Sword
 
 [![Build Status](https://travis-ci.org/patrick-mc/sword.svg?branch=master)](https://travis-ci.org/patrick-mc/sword)
-[![Code Maintainability](https://api.codeclimate.com/v1/badges/6f5a52da58fae839098f/maintainability)](https://codeclimate.com/github/patrick-mc/sword/maintainability)
+[![Maintainability](https://api.codeclimate.com/v1/badges/c4b98555a243a1c97d7e/maintainability)](https://codeclimate.com/github/patrick-mc/sword/maintainability)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/6f5a52da58fae839098f/test_coverage)](https://codeclimate.com/github/patrick-mc/sword/test_coverage)
 [![JitPack - Version](https://jitpack.io/v/patrick-mc/sword.svg)](https://jitpack.io/#patrick-mc/sword)
 [![JitPack - Downloads](https://img.shields.io/jitpack/dm/github/patrick-mc/sword)](https://jitpack.io/#patrick-mc/sword)
@@ -35,6 +35,6 @@
 >
 >...
 >dependencies {
->    implementation 'com.github.patrick-mc:sword:0.1-beta'
+>    implementation 'com.github.patrick-mc:sword:0.2-beta'
 >}
 >```
