@@ -1,6 +1,6 @@
 package com.github.patrick.sword
 
-class SwordPlayer {
+internal class SwordPlayer {
     val swords = ArrayList<SwordEntity>()
     val flyingSword = ArrayList<SwordEntity>()
 }

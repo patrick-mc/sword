@@ -6,15 +6,12 @@ import org.bukkit.Bukkit.getPlayer
 import org.bukkit.command.Command
 import org.bukkit.command.CommandExecutor
 import org.bukkit.command.CommandSender
+import org.bukkit.command.TabCompleter
 import org.bukkit.entity.Player
+import kotlin.streams.toList
 
-class SwordCommandExecutor : CommandExecutor {
-    override fun onCommand(
-        sender: CommandSender?,
-        command: Command?,
-        label: String?,
-        args: Array<out String>?
-    ): Boolean {
+internal class SwordCommand : CommandExecutor, TabCompleter {
+    override fun onCommand(sender: CommandSender?, command: Command?, label: String?, args: Array<out String>?): Boolean {
         if (args == null || args.isEmpty()) {
             sender?.sendMessage("Action: 'add', 'remove', 'on', or 'off'")
             return true
@@ -27,12 +24,20 @@ class SwordCommandExecutor : CommandExecutor {
         return true
     }
 
+    override fun onTabComplete(sender: CommandSender?, command: Command?, alias: String?, args: Array<out String>?): List<String>? {
+        return when (args?.size) {
+            1 -> listOf("add", "remove", "off", "on")
+            2 -> if (getAllPlayers() != null && setOf("add", "remove").contains(args[0])) getAllPlayers()?.stream()?.map(Player::getName)?.toList() else listOf("")
+            else -> listOf("")
+        }
+    }
+
     private fun manageSwordPlayer(sender: CommandSender?, args: Array<out String>) {
         if (args.size < 2) sender?.sendMessage("Player: " + getAllPlayers()?.toString())
         if (args.size == 2) {
             val action = args[0]
             val entry = args[1]
-            if (getPlayer(entry) != null) {
+            if (getPlayer(entry) == null) {
                 sender?.sendMessage("Not found player: $entry")
                 return
             }
@@ -56,5 +61,5 @@ class SwordCommandExecutor : CommandExecutor {
 
     private fun removePlayer(player: Player) = swordPlayer[player]?.let { swordPlayer.remove(player) }
 
-    private fun sendMessage(sender: CommandSender?, size: Int, args: Array<out String>) = if (size > 1) sender?.sendMessage("Unrecognized arguments: " + args.drop(size)) else null
+    private fun sendMessage(sender: CommandSender?, size: Int, args: Array<out String>) = if (args.size > size) sender?.sendMessage("Unrecognized arguments: " + args.drop(size)) else null
 }

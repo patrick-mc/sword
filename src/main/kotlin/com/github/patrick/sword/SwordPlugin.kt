@@ -5,8 +5,7 @@ import com.github.patrick.sword.SwordProcess.stop
 import org.bukkit.plugin.java.JavaPlugin
 
 @Suppress("UNUSED")
-class SwordPlugin : JavaPlugin() {
-
+internal class SwordPlugin : JavaPlugin() {
     override fun onEnable() = start(this)
 
     override fun onDisable() = stop()

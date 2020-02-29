@@ -4,7 +4,7 @@ plugins {
 }
 
 group = "com.github.patrick-mc"
-version = "0.1-beta"
+version = "0.3-beta"
 
 repositories {
     mavenCentral()

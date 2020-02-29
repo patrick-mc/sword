@@ -18,107 +18,35 @@ import kotlin.math.atan2
 import kotlin.random.Random
 
 @Suppress("DEPRECATION")
-class SwordEntity(private val owner: Player?, private val item: ItemStack?) {
+internal class SwordEntity(private val owner: Player, private val item: ItemStack) {
     private var ticks = 0
     private var flyingTicks = 0
+    private var flying = false
     private var position: Vector? = null
-    private var yaw = 0F
-    private var pitch = 0F
-    var flying = false
-    var valid = true
-    var move: Vector? = null
-    private val armorStand: ArmorStand?
+    private var move: Vector? = null
+    private var valid = true
     private val tapArmorStand: TapArmorStand? = Tap.ENTITY.createEntity(ArmorStand::class.java)
+    private val armorStand: ArmorStand?
 
     init {
-        tapArmorStand?.apply {
-            setGravity(false)
-            setBasePlate(false)
-            isInvisible = true
-            isMarker = true
-            owner?.location?.let { setPosition(it.x, it.y + 10.5, it.z) }
-            setHeadPose(0F, 0F, -45F)
-        }
+        tapArmorStand?.apply { setUp(this) }
         armorStand = tapArmorStand?.bukkitEntity
         getAllPlayers()?.let { sendTo(it, true) }
     }
 
-    fun update(radius: Double) {
-        tapArmorStand?.let { stand ->
-            ++ticks
-            if (ticks == 2) getAllPlayers()?.let { updateEquipment(it) }
-            position = armorStand?.location?.let { Vector(it.x, it.y, it.z) }
-            if(flying) {
-                move?.let {
-                    yaw = (-Math.toDegrees(atan2(it.x, it.z))).toFloat()
-                    pitch = (-Math.toDegrees(asin(it.y))).toFloat()
-                }
-                flyingTicks++
-                if (flyingTicks == 1) position?.let { stand.setPositionAndRotation(it.x, it.y - 0.25, it.z - 1, yaw, pitch) }
-                if (flyingTicks == 2) armorStand?.velocity = org.bukkit.util.Vector(0.0, 0.0, 0.0)
-                if (flyingTicks > 2) {
-                    stand.setHeadPose(0F, 0F, pitch - 45F)
-                    if(flyingTicks > 62)
-                        remove()
-                    position?.let { vec -> move?.let { stand.setPositionAndRotation(vec.x + it.x, vec.y + it.y, vec.z + it.z, yaw, pitch) } }
+    fun update(radius: Double) = tapArmorStand?.let {
+        ++ticks
+        position = armorStand?.location?.let { pos -> Vector(pos.x, pos.y, pos.z) }
 
-                    var foundPlayer: Player? = null
-                    var distance = 0.0
+        if(flying) fly(it)
+        else queue(it, radius)
 
-                    getAllPlayers()?.forEach { player ->
-                        if (player != this.owner && player.isValid) {
-                            val rayTraceResult = Tap.ENTITY.wrapEntity<TapPlayer>(player)?.boundingBox?.expand(1.0, 2.0, 1.0)?.calculateRayTrace(position, position?.add(move))
-                            rayTraceResult?.let {
-                                val location = player.location
-                                val currentDistance = position?.distance(Vector(location.x, location.y, location.z))
-                                currentDistance?.let { current ->
-                                    if (current < distance || distance == 0.0) {
-                                        distance = current
-                                        foundPlayer = player
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    foundPlayer?.let { player ->
-                        val location = player.location
-                        Packet.EFFECT.firework(
-                            FireworkEffect.builder().color(Color.fromRGB(Random.nextInt(0xFFFFFF)).asRGB()).type(
-                                FireworkEffect.Type.STAR).build(), location.x, location.y + 0.9, location.z).sendAll()
-                        player.noDamageTicks = 0
-                        player.damage(when (item?.type) {
-                            Material.WOOD_SWORD -> 4.0
-                            Material.STONE_SWORD -> 5.0
-                            Material.GOLD_SWORD -> 6.0
-                            Material.IRON_SWORD -> 7.0
-                            Material.DIAMOND_SWORD -> 8.0
-                            else -> 0.0
-                        }, owner)
-                        player.velocity = move?.normalize()?.let { vector -> org.bukkit.util.Vector(vector.x, vector.y, vector.z) }
-                        remove()
-                    }
-                }
-            } else {
-                val location = owner?.location?.clone()
-                location?.let {
-                    if (ticks < 2) {
-                        it.add(0.0, 10.5.minus(ticks.times(5)), 0.0)
-                    }
-                    it.yaw = (radius * 360).toFloat()
-                    it.pitch = 0F
-                    it.add(location.direction.multiply(1.5))
-                    stand.setPositionAndRotation(it.x , it.y + 0.5, it.z, it.yaw, it.pitch)
-                }
-            }
-            getAllPlayers()?.let { sendTo(it, false) }
-        }
+        getAllPlayers()?.let { sendTo(it, false) }
     }
-
-    private fun updateEquipment(players: Collection<Player>) = armorStand?.entityId?.let { Packet.ENTITY.equipment(it, EquipmentSlot.HEAD, item?.type?.id?.let { id -> Tap.ITEM.newItemStack(id, 1, 0 ) }).sendTo(players) }
 
     fun remove() {
         armorStand?.entityId?.let { Packet.ENTITY.destroy(it).sendAll() }
-        this.valid = false
+        valid = false
     }
 
     fun sendTo(players: Collection<Player>, new: Boolean) {
@@ -127,4 +55,90 @@ class SwordEntity(private val owner: Player?, private val item: ItemStack?) {
         tapArmorStand?.let { Packet.ENTITY.teleport(armorStand, it.posX, it.posY, it.posZ, it.yaw, it.pitch, false).sendTo(players) }
         if (new) Packet.ENTITY.spawnMob(armorStand).sendTo(players)
     }
+
+    fun setMove(vector: Vector) {
+        move = vector
+    }
+
+    fun setFlying() {
+        flying = true
+    }
+
+    fun getValid(): Boolean = valid
+
+    private fun setUp(stand: TapArmorStand) {
+        stand.let {
+            it.isInvisible = true
+            it.isMarker = true
+            it.setGravity(false)
+            it.setBasePlate(false)
+            it.setHeadPose(0F, 0F, -45F)
+            owner.location.let { pos -> it.setPosition(pos.x, pos.y + 10.5, pos.z) }
+        }
+    }
+
+    private fun fly(stand: TapArmorStand) {
+        move?.let { vector -> tapArmorStand?.let { it.setPositionAndRotation(it.posX, it.posY, it.posZ - 1, (-Math.toDegrees(atan2(vector.x, vector.z))).toFloat(), (-Math.toDegrees(asin(vector.y))).toFloat()) } }
+        flyingTicks++
+        if (flyingTicks == 1) position?.let { stand.setPosition(it.x, it.y - 0.25, it.z - 1) }
+        if (flyingTicks == 2) armorStand?.velocity = org.bukkit.util.Vector(0.0, 0.0, 0.0)
+        if (flyingTicks > 2) {
+            if(flyingTicks > 62) remove()
+            position?.let { vec -> move?.let { stand.setPosition(vec.x + it.x, vec.y + it.y, vec.z + it.z) } }
+            rayTrace()?.let { hit(it) }
+        }
+    }
+
+    private fun queue(stand: TapArmorStand, radius: Double) {
+        if (ticks == 2) getAllPlayers()?.let { updateEquipment(it) }
+        val location = owner.location.clone()
+        location.let {
+            if (ticks < 2) it.add(0.0, 10.5.minus(ticks.times(5)), 0.0)
+            it.yaw = (radius * 360).toFloat()
+            it.pitch = 0F
+            it.add(location.direction.multiply(1.5))
+            stand.setPositionAndRotation(it.x , it.y + 0.5, it.z, it.yaw, it.pitch)
+        }
+    }
+
+    private fun rayTrace(): Player? {
+        var foundPlayer: Player? = null
+        var distance = 0.0
+
+        getAllPlayers()?.forEach { player ->
+            if (player != owner && player.isValid) {
+                val rayTraceResult = Tap.ENTITY.wrapEntity<TapPlayer>(player)?.boundingBox?.expand(1.0, 2.0, 1.0)?.calculateRayTrace(position, position?.add(move))
+                rayTraceResult?.let {
+                    val location = player.location
+                    val currentDistance = position?.distance(Vector(location.x, location.y, location.z))
+                    currentDistance?.let { current ->
+                        if (current < distance || distance == 0.0) {
+                            distance = current
+                            foundPlayer = player
+                        }
+                    }
+                }
+            }
+        }
+        foundPlayer?.let { return it }
+        return null
+    }
+
+    private fun hit(player: Player) {
+        val location = player.location
+        Packet.EFFECT.firework(FireworkEffect.builder().color(Color.fromRGB(Random.nextInt(0xFFFFFF)).asRGB()).type(FireworkEffect.Type.STAR).build(), location.x, location.y + 0.9, location.z).sendAll()
+        player.noDamageTicks = 0
+        player.damage(when (item.type) {
+            Material.WOOD_SWORD -> 4.0
+            Material.STONE_SWORD -> 5.0
+            Material.GOLD_SWORD -> 6.0
+            Material.IRON_SWORD -> 7.0
+            Material.DIAMOND_SWORD -> 8.0
+            else -> 0.0
+        }, owner)
+        player.velocity = move?.normalize()?.let { vector -> org.bukkit.util.Vector(vector.x, vector.y, vector.z) }
+        remove()
+    }
+
+    private fun updateEquipment(players: Collection<Player>) = armorStand?.entityId?.let { Packet.ENTITY.equipment(it, EquipmentSlot.HEAD, item.type.id.let { id -> Tap.ITEM.newItemStack(id, 1, 0 ) }).sendTo(players) }
 }
