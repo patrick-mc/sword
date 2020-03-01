@@ -1,6 +1,6 @@
 package com.github.patrick.sword
 
-internal class SwordTask : Runnable {
+class SwordTask : Runnable {
     override fun run() {
         SwordProcess.swordPlayer.values.forEach {
             it.swords.forEachIndexed { i, e -> e.update(i / it.swords.count().toDouble()) }

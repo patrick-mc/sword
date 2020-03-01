@@ -2,7 +2,6 @@
 
 [![Build Status](https://travis-ci.org/patrick-mc/sword.svg?branch=master)](https://travis-ci.org/patrick-mc/sword)
 [![Maintainability](https://api.codeclimate.com/v1/badges/c4b98555a243a1c97d7e/maintainability)](https://codeclimate.com/github/patrick-mc/sword/maintainability)
-[![Test Coverage](https://api.codeclimate.com/v1/badges/6f5a52da58fae839098f/test_coverage)](https://codeclimate.com/github/patrick-mc/sword/test_coverage)
 [![JitPack - Version](https://jitpack.io/v/patrick-mc/sword.svg)](https://jitpack.io/#patrick-mc/sword)
 [![JitPack - Downloads](https://img.shields.io/jitpack/dm/github/patrick-mc/sword)](https://jitpack.io/#patrick-mc/sword)
 [![Twitch Status](https://img.shields.io/twitch/status/patrickkr)](https://twitch.tv/patrickkr)
@@ -19,10 +18,15 @@
 [![GitHub Issues](https://img.shields.io/github/issues-pr-raw/patrick-mc/sword)](https://github.com/patrick-mc/sword/pulls?q=is%3Apr+is%3Aopen)
 [![GitHub Closed Issues](https://img.shields.io/github/issues-pr-closed-raw/patrick-mc/sword)](https://github.com/patrick-mc/sword/pulls?q=is%3Apr+is%3Aclosed)
 
-> Sword plugin written in Kotlin
+> A Sword Plugin written in Kotlin using Tap Library
 
 > * ##### Features
 > * Sword Plugin for Spigot Server
+
+> ### How to Use Sword Plugin
+> * Add Players using '/sword add \<player\>'
+> * Add swords using right-clicking mouse
+> * Throw swords using left-clicking mouse
 
 > * ##### Gradle
 >```groovy
@@ -35,6 +39,6 @@
 >
 >...
 >dependencies {
->    implementation 'com.github.patrick-mc:sword:0.2-beta'
+>    implementation 'com.github.patrick-mc:sword:1.0-pre1'
 >}
 >```

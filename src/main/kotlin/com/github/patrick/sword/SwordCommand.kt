@@ -10,7 +10,7 @@ import org.bukkit.command.TabCompleter
 import org.bukkit.entity.Player
 import kotlin.streams.toList
 
-internal class SwordCommand : CommandExecutor, TabCompleter {
+class SwordCommand : CommandExecutor, TabCompleter {
     override fun onCommand(sender: CommandSender?, command: Command?, label: String?, args: Array<out String>?): Boolean {
         if (args == null || args.isEmpty()) {
             sender?.sendMessage("Action: 'add', 'remove', 'on', or 'off'")
@@ -26,8 +26,8 @@ internal class SwordCommand : CommandExecutor, TabCompleter {
 
     override fun onTabComplete(sender: CommandSender?, command: Command?, alias: String?, args: Array<out String>?): List<String>? {
         return when (args?.size) {
-            1 -> listOf("add", "remove", "off", "on")
-            2 -> if (getAllPlayers() != null && setOf("add", "remove").contains(args[0])) getAllPlayers()?.stream()?.map(Player::getName)?.toList() else listOf("")
+            1 -> listOf("add", "remove", "off", "on").filter { it.startsWith(args[0]) }
+            2 -> if (getAllPlayers() != null && setOf("add", "remove").contains(args[0])) getAllPlayers()?.stream()?.map(Player::getName)?.toList()?.filter { it.startsWith(args[1]) } else listOf("")
             else -> listOf("")
         }
     }

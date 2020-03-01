@@ -1,47 +1,23 @@
-env:
-  global:
-    - CC_TEST_REPORTER_ID = $REPORTER_ID
-
 language: java
 os: linux
 jdk:
+  - oraclejdk8
   - openjdk8
 
 branches:
   only:
     - master
-    - develop
-
-before_install:
-  - chmod +x ./gradlew
-  - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
-  - chmod +x ./cc-test-reporter
-
-before_script:
-  - ./cc-test-reporter before-build
-
-script:
-  gradle test
-after_script:
-  - ./cc-test-reporter format-coverage -d -t jacoco ./target/jacoco-ut/jacoco.xml
-  - ./cc-test-reporter upload-coverage -d
 
 cache:
   directories:
     - '$HOME/.m2'
     - '$HOME/.gradle'
 
-notifications:
-  webhooks:
-    urls:
-      - $WEBHOOK_URL
-    on_success: always
-    on_failure: always
-    on_start:   always
-    on_cancel:  always
-    on_error: always
-  email:
-    recipients:
-      - $EMAIL
-    on_success: always
-    on_failure: always
+after_success:
+  - wget https://raw.githubusercontent.com/DiscordHooks/travis-ci-discord-webhook/master/send.sh
+  - chmod +x send.sh
+  - ./send.sh success $WEBHOOK_URL
+after_failure:
+  - wget https://raw.githubusercontent.com/DiscordHooks/travis-ci-discord-webhook/master/send.sh
+  - chmod +x send.sh
+  - ./send.sh failure $WEBHOOK_URL
