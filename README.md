@@ -1,6 +1,6 @@
  # Sword
 
-[![Build Status](https://travis-ci.org/patrick-mc/sword.svg?branch=master)](https://travis-ci.org/patrick-mc/sword)
+[![Build Status](https://travis-ci.com/patrick-mc/sword.svg?branch=master)](https://travis-ci.org/patrick-mc/sword)
 [![Maintainability](https://api.codeclimate.com/v1/badges/c4b98555a243a1c97d7e/maintainability)](https://codeclimate.com/github/patrick-mc/sword/maintainability)
 [![JitPack - Version](https://jitpack.io/v/patrick-mc/sword.svg)](https://jitpack.io/#patrick-mc/sword)
 [![JitPack - Downloads](https://img.shields.io/jitpack/dm/github/patrick-mc/sword)](https://jitpack.io/#patrick-mc/sword)
